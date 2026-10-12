@@ -5,13 +5,9 @@ __pycache__/
 .venv/
 venv/
 
-# ── 测试/工具产物 ──
+# ── 测试/工具产物（整个 .workbuddy 目录不入库） ──
 .pytest_cache/
-.workbuddy/junit.xml
-.workbuddy/result.txt
-.workbuddy/pdf_log.txt
-.workbuddy/export_pngs/
-.workbuddy/*.png
+.workbuddy/
 
 # ── 运行时用户数据（含隐私，不入库） ──
 予安_companions.json
