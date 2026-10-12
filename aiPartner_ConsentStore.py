@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · §16.1 情境感知授权与隐私开关 —— 持久化层（ConsentStore）
+"""aiPartner · §16.1 情境感知授权与隐私开关 —— 持久化层（ConsentStore）
 
 对齐方案 §16.1 的设计要点，逐条落地：
 
@@ -27,7 +27,7 @@
      "policy_version": str|None, "granted_at": float|None, "updated_at": float}
 
 自测：直接运行本文件看完整授权生命周期演示。
-测试：test_予安_ConsentStore.py（pytest）
+测试：test_aiPartner_ConsentStore.py（pytest）
 """
 
 from __future__ import annotations
@@ -72,7 +72,7 @@ class ConsentStore:
 
     def __init__(self, path: str | None = None, clock=None):
         self.path = path or os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                         "予安_consent.json")
+                                         "aiPartner_consent.json")
         self.clock = clock or (lambda: __import__("time").time())
         self._state: dict = {}
         self._load()

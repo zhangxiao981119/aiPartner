@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-予安 · 全谱情感引擎 MoodEngineV2（§10 基础 + §16.7 细色映射层）
+aiPartner · 全谱情感引擎 MoodEngineV2（§10 基础 + §16.7 细色映射层）
 
 七情基色：joy(喜) anger(怒) sorrow(哀) fun(乐) worry(忧) longing(思) fear(惧)
 细色：委屈 / 感动 / 想你 / 愧疚 / 烦躁 / 心疼 / 无奈 / 期待 / 失落 / 吃醋 / 释然……

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""予安 MoodEngineV2（全谱情感引擎）流转测试 —— 对齐 §16.7。"""
+"""aiPartner MoodEngineV2（全谱情感引擎）流转测试 —— 对齐 §16.7。"""
 import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from 予安_MoodEngineV2 import MoodEngineV2  # noqa: E402
+from aiPartner_MoodEngineV2 import MoodEngineV2  # noqa: E402
 
 
 class FakeClock:

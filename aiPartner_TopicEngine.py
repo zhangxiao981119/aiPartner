@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · 趣味话题引擎 TopicEngine（§16.3 生产版）
+"""aiPartner · 趣味话题引擎 TopicEngine（§16.3 生产版）
 ====================================================
 
 无聊时的「热点谈资」线。与骨架版的三点本质区别：
@@ -12,7 +12,7 @@
    （内置微博热搜公开接口与通用 HTTP JSON 适配器）；内置种子池只是
    **离线兜底**（源全挂时仍能聊，但永远优先真实热点）。
 3. **LLM 走 API**——转述与反应分类交给 OpenAI 兼容协议的开源大模型
-   （Qwen/DeepSeek/GLM，见 予安_LLM.py）；未配 key 或调用失败一律规则兜底，
+   （Qwen/DeepSeek/GLM，见 aiPartner_LLM.py）；未配 key 或调用失败一律规则兜底，
    陪伴永不因模型掉线而中断。
 
 其余 §16.3 原则不变：合规闸（敏感词/广告软推/争议类别，入池即拦）、
@@ -157,7 +157,7 @@ class TopicEngine:
     def __init__(self, sources: list[TopicSource] | None = None, llm=None,
                  seed=None, taste_path: str | None = None,
                  offline_fallback: bool = True):
-        self.llm = llm               # 可选：予安_LLM.LLMClient（注入或读 env）
+        self.llm = llm               # 可选：aiPartner_LLM.LLMClient（注入或读 env）
         self.taste_path = taste_path
         self.pool: list[dict] = []
         self._shown: list[str] = []               # 最近已递出的话题指纹（防复读）
@@ -322,7 +322,7 @@ if __name__ == "__main__":
     say("\n【直接开聊，不问「想聊吗」】")
     for i in range(3):
         t = eng.suggest()
-        say(f"  予安：哎，给你说个事：{t['share']}（{t['source']}刷到的）")
+        say(f"  aiPartner：哎，给你说个事：{t['share']}（{t['source']}刷到的）")
         reply = ["哈哈哈真的假的？", "换", "不感兴趣，别聊这个"][i]
         act = eng.classify(reply)
         say(f"  用户：{reply}")

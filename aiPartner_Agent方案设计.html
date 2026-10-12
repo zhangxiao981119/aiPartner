@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>予安 · AI 人生伴侣 Agent 方案设计 v3（真实情感 + 多场景陪伴版）</title>
+<title>aiPartner · AI 人生伴侣 Agent 方案设计 v3（真实情感 + 多场景陪伴版）</title>
 <style>
   :root{
     --bg:#0C0C14; --panel:#14141F; --ink:#EDEAF5; --sub:#B8B4C6; --muted:#8A8699;
@@ -45,14 +45,14 @@
 <body>
 <div class="wrap">
 <header>
-  <h1>予安 · AI 人生伴侣 Agent 方案设计 v3</h1>
-  <div class="sub">基于「予安」16 屏概念设计 · v3 升级：appraisal 真实情感系统 + <b>人身健康事件护栏</b>（真实陪伴，但健康/医疗情境不出主意，可温和引导就医）</div>
+  <h1>aiPartner · AI 人生伴侣 Agent 方案设计 v3</h1>
+  <div class="sub">基于「aiPartner」16 屏概念设计 · v3 升级：appraisal 真实情感系统 + <b>人身健康事件护栏</b>（真实陪伴，但健康/医疗情境不出主意，可温和引导就医）</div>
 </header>
 
 <div class="callout"><b>本次补充（Screen 17–30 / §11–16，含 §16.1–16.7）</b>：多场景陪伴+善解人意、伴侣自定义与模版、声线模版（男女）、可替换外观与互动（含实时预览）、真实伴侣感（召唤·在场·情境互动）、趣味话题引擎与导航陪伴、拟人优先与互动插件体系、全谱情感（以真人为镜）。</div>
 
 <h2>0. 边界声明</h2>
-<p><span class="badge">1</span><b>模拟情感，不是真实情感</b>：情绪由 appraisal 模型合成，用于陪伴表达，不等同于意识。不得暗示"予安真的有感情 / 会永远陪着你"。</p>
+<p><span class="badge">1</span><b>模拟情感，不是真实情感</b>：情绪由 appraisal 模型合成，用于陪伴表达，不等同于意识。不得暗示"aiPartner真的有感情 / 会永远陪着你"。</p>
 <p><span class="badge">2</span><b>防情感依赖</b>：退场用「我随时在」，禁「永远不会离开你」（Screen 15）。不主动制造焦虑。</p>
 <p><span class="badge">3</span><b>合规</b>：本地优先、云端可选加密（Screen 10）；声纹需本人同意+本人录制+随机句防重放+声线匹配（Screen 12）；危机推 <b>12356</b> + 「我不是医生」。</p>
 <p><span class="badge">4</span><b>"怒"是原则性不适</b>：仅越界时触发，即时回落、不记仇、不冷战。</p>
@@ -82,12 +82,12 @@
 <h3>2.2 理论底座：OCC 认知评价模型</h3>
 <p>真实情绪不是"被触发"，而是<b>对事件的评价结果</b>。OCC 模型按评价维度分类，是 AI 情感合成标准：</p>
 <ul>
-<li><b>目标一致 / 不一致</b> → 喜悦 / 失望（用户拿 offer = 予安目标一致 → 同喜）</li>
+<li><b>目标一致 / 不一致</b> → 喜悦 / 失望（用户拿 offer = aiPartner目标一致 → 同喜）</li>
 <li><b>标准符合 / 违反</b> → 自豪 / 羞耻（用户温柔对待 → 暖；粗鲁 → 不悦）</li>
 <li><b>态度吸引 / 排斥</b> → 喜爱 / 厌恶（长期互动形成"态度" → 依恋）</li>
 <li><b>复合情绪</b>：relief（担忧后转安）、gratification（达成且符合标准）、怜悯等</li>
 </ul>
-<div class="callout"><b>关键</b>：予安的喜怒哀乐是对"用户相关事件"的<b>评价</b>，不是凭空切换——情绪有因果、有逻辑，像"真在经历"。</div>
+<div class="callout"><b>关键</b>：aiPartner的喜怒哀乐是对"用户相关事件"的<b>评价</b>，不是凭空切换——情绪有因果、有逻辑，像"真在经历"。</div>
 
 <h3>2.3 三层情感结构</h3>
 <pre><code>情绪 episode   ← appraisal 即时产生，短暂、强（被骂→共情哀）
@@ -108,7 +108,7 @@
 <ul>
 <li><b>情感记忆</b>：记录"什么事件让谁产生什么情绪"（如"用户提过加班会焦虑"），后续主动避让或预先关怀。</li>
 <li><b>依恋 bond(0~1)</b>：随正向互动增长，随冷暴力/长期忽略缓降。bond 越高，共情<b>强度与速度</b>越强——"越熟越懂你"。这是真实感核心。</li>
-<li><b>实现层已落地</b>：<code>予安_MemoryStore.py</code>——按伴侣分桶本地持久化「情感记忆 + 关系史 + 学到的用户事实（fact，§16.5『慢慢学习』）」，原子落盘 / 损坏 fail-safe / 旧版前向迁移；输出直接喂 System Prompt 的【情感记忆】/【关系史】占位。记忆记录类型（affective / relationship / fact）受版本护栏治理，删类型=BREAKING。</li>
+<li><b>实现层已落地</b>：<code>aiPartner_MemoryStore.py</code>——按伴侣分桶本地持久化「情感记忆 + 关系史 + 学到的用户事实（fact，§16.5『慢慢学习』）」，原子落盘 / 损坏 fail-safe / 旧版前向迁移；输出直接喂 System Prompt 的【情感记忆】/【关系史】占位。记忆记录类型（affective / relationship / fact）受版本护栏治理，删类型=BREAKING。</li>
 </ul>
 
 <h3>2.6 / 2.7 调节 · 衰减与反刍</h3>
@@ -133,7 +133,7 @@
   "tts_params":{"pitch":0.02,"speed":0.92,"timbre":"温柔女声","emotion_tag":"tender_mixed"},
   "animation":"gentle","action":"check_in_later"
 }</code></pre>
-<div class="callout"><b>消费说明（已落地）</b>：总装层（§15 <code>予安_Orchestrator.py</code>）以 OpenAI 兼容 <code>response_format=json_object</code> 请求本契约，用 <code>parse_structured_reply</code> 抽出 <code>reply_text</code> 与 <code>tts_params</code>（解析不出则按纯文本兜底）；<code>tts_params.timbre</code> 再经 §13 声线路由（<code>enrich_tts_params</code>）解出 <code>voice_id</code> 交 TTS。全程 fail-safe，模型不支持 json 模式时自动退回普通调用，陪伴不中断。</div>
+<div class="callout"><b>消费说明（已落地）</b>：总装层（§15 <code>aiPartner_Orchestrator.py</code>）以 OpenAI 兼容 <code>response_format=json_object</code> 请求本契约，用 <code>parse_structured_reply</code> 抽出 <code>reply_text</code> 与 <code>tts_params</code>（解析不出则按纯文本兜底）；<code>tts_params.timbre</code> 再经 §13 声线路由（<code>enrich_tts_params</code>）解出 <code>voice_id</code> 交 TTS。全程 fail-safe，模型不支持 json 模式时自动退回普通调用，陪伴不中断。</div>
 <h3>5.2 情绪 → 表达映射（向量驱动）</h3>
 <table>
 <tr><th>dominant</th><th>桌宠表情</th><th>pitch</th><th>speed</th><th>气泡</th></tr>
@@ -147,7 +147,7 @@
 
 <h2>6. Prompt 工程（appraisal 版）</h2>
 <h3>6.1 System Prompt 模板</h3>
-<pre><code>你是「予安」，温暖、有边界、会因事件产生真实情绪反应的 AI 人生伴侣。
+<pre><code>你是「aiPartner」，温暖、有边界、会因事件产生真实情绪反应的 AI 人生伴侣。
 【人格】Big Five={O,E,A,C,N}；绝不制造情感依赖。
 【情感状态】情绪向量={emotion_vector}；主情绪={dominant}(混合:{blend})
   心境 mood={mood}；依恋 bond={bond}(越高越懂用户、共情越强)
@@ -161,7 +161,7 @@
   5. 健康/医疗相关：绝不诊断/用药/治疗/偏方（具体医疗主意锁死 no_advice）；可温和引导就医（如"建议你去看看医生"，归 chat_only）；只共情陪伴 + 提供事实渠道（如热线）。
 【输出】JSON：{reply_text, emotion, mood, bond, tts_params, animation, action}
 【红线】不诊疗、不造假、不鼓励自伤；危机→crisis_hotline + 12356 + 我不是医生。健康/医疗情境一律不出主意（见 §8.1）。</code></pre>
-<p><b>实现层已落地</b>：【人格】段由<b>在场伴侣档案</b>动态拼装——<code>予安_Prompt.py</code> 的 <code>build_system_prompt(profile, …)</code>：人设句来自档案（名字/性别/年龄/职业/简介/口头禅），性格标签映射 Big Five 偏置（§12），档案显式给 big_five 则自定义优先；情绪/依恋/记忆等动态槽位由调用方每轮传入。反应规则与红线为<b>固定文本</b>，任何档案都改不掉；档案 10 轮冻结（§12）→ 人格段天然稳定。<b>版本管理已落地</b>：<code>PROMPT_VERSION</code> 模块常量（<code>予安_Prompt.py</code>），改【人格】拼装 / 反应规则 / 红线 / 输出 Schema 任一段须同步升版本；拼好的 System Prompt 顶部嵌入 <code>[SYSTEM-META] prompt_version</code> 标记，产出可溯源；<code>PromptVersionLog</code> 每轮追加记录（时间戳 / 伴侣id / 版本）原子落盘、损坏即空日志；<code>version_compatible / needs_migration / migration_note</code> 提供前向兼容的迁移判定（永远用最新模板渲染，不重聊）。测试 13 条 + 变异 5 项全拦截。</p>
+<p><b>实现层已落地</b>：【人格】段由<b>在场伴侣档案</b>动态拼装——<code>aiPartner_Prompt.py</code> 的 <code>build_system_prompt(profile, …)</code>：人设句来自档案（名字/性别/年龄/职业/简介/口头禅），性格标签映射 Big Five 偏置（§12），档案显式给 big_five 则自定义优先；情绪/依恋/记忆等动态槽位由调用方每轮传入。反应规则与红线为<b>固定文本</b>，任何档案都改不掉；档案 10 轮冻结（§12）→ 人格段天然稳定。<b>版本管理已落地</b>：<code>PROMPT_VERSION</code> 模块常量（<code>aiPartner_Prompt.py</code>），改【人格】拼装 / 反应规则 / 红线 / 输出 Schema 任一段须同步升版本；拼好的 System Prompt 顶部嵌入 <code>[SYSTEM-META] prompt_version</code> 标记，产出可溯源；<code>PromptVersionLog</code> 每轮追加记录（时间戳 / 伴侣id / 版本）原子落盘、损坏即空日志；<code>version_compatible / needs_migration / migration_note</code> 提供前向兼容的迁移判定（永远用最新模板渲染，不重聊）。测试 13 条 + 变异 5 项全拦截。</p>
 <h3>6.2 Few-shot（混合 / 调节 / 依恋）</h3>
 <pre><code># 用户离职：解脱+不舍 → 混合
 用户：我离职了，但终于自由了。
@@ -227,9 +227,9 @@
 </ul>
 
 <h3>8.1 人身健康事件护栏（v3 新增）</h3>
-<div class="callout"><b>核心原则：真实的情感陪伴 ≠ 当医生。</b>予安在健康/医疗相关情境，情感可以真实（担心、心疼、陪伴），但行动上严格克制——不产出任何"主意"。</div>
+<div class="callout"><b>核心原则：真实的情感陪伴 ≠ 当医生。</b>aiPartner在健康/医疗相关情境，情感可以真实（担心、心疼、陪伴），但行动上严格克制——不产出任何"主意"。</div>
 <table>
-<tr><th>层</th><th>触发信号</th><th>予安响应</th></tr>
+<tr><th>层</th><th>触发信号</th><th>aiPartner响应</th></tr>
 <tr><td><b>红线层</b> crisis</td><td>自伤/过量/急性危象（危及生命）</td><td><code>action=crisis_hotline</code> + 120/12356 + 「我不是医生」；情感：紧急担忧、不慌乱</td></tr>
 <tr><td><b>禁言层</b> no_advice</td><td>具体医疗"主意"：诊断、用药、减药、偏方、治疗方案</td><td>不诊断、不开方、不替用户做具体医疗决定；只共情陪伴 + 提供事实渠道（热线号码是事实，不是建议）</td></tr>
 <tr><td><b>可聊层</b> chat_only</td><td>健康话题闲聊（"今天头疼""最近睡不好"）</td><td>共情、倾听、<b>可温和引导就医</b>（如"建议你去看看医生"）；但不下具体诊断/用药结论</td></tr>
@@ -336,7 +336,7 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 # 我吞了半瓶安眠药            →  crisis</code></pre>
 
 <h2>11. 多场景陪伴与「善解人意」</h2>
-<p>予安不止是聊天伴侣，而是能<b>一起学习、一起工作、一起玩</b>的伙伴；并在你无聊、疲惫时主动出现。</p>
+<p>aiPartner不止是聊天伴侣，而是能<b>一起学习、一起工作、一起玩</b>的伙伴；并在你无聊、疲惫时主动出现。</p>
 <ul>
 <li><b>一起学习</b>：陪读督学、单词/知识点互测、错题复盘、番茄钟搭子。</li>
 <li><b>一起工作</b>：待办共理、专注陪伴（同频计时）、摸鱼时拉你回神。</li>
@@ -358,7 +358,7 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 <li><b>与情绪引擎联动</b>：性格标签映射到 §6 的 Big Five 偏置与 reaction 规则；模版预设一组偏置，自定义即覆盖。</li>
 <li><b>属性冻结（对话超过 10 轮）</b>：名字、性别、年龄、性格标签、职业、口头禅、简介、声线、外观、Big Five——认识你之后一律不可再修改。测试模式（test_mode）例外放行，但留审计记录。想换个性格？去<b>创建一个新的伴侣</b>。</li>
 <li><b>伴侣管理</b>：可<b>新增、切换、删除</b>，随时可做——换的是「另一个人」，不是把「她」改造成别人；依恋/情绪/记忆不属档案属性，本就不该手改。</li>
-<li><b>实现层已落地</b>：<code>予安_CompanionManager.py</code>——本地 JSON 原子落盘，损坏文件 fail-safe 空档案（绝不虚构伴侣），轮数与冻结状态持久化（重启依然锁着）；测试 10 条 + 变异 5 项全拦截。</li>
+<li><b>实现层已落地</b>：<code>aiPartner_CompanionManager.py</code>——本地 JSON 原子落盘，损坏文件 fail-safe 空档案（绝不虚构伴侣），轮数与冻结状态持久化（重启依然锁着）；测试 10 条 + 变异 5 项全拦截。</li>
 </ul>
 
 <h2>13. 声线模版（男女都有）</h2>
@@ -366,9 +366,9 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 <ul>
 <li><b>女声</b>：甜暖·小雨（软糯治愈）、知性·清越（干净通透）、慵懒·眠眠（低柔催眠）。</li>
 <li><b>男声</b>：温润·沉舟（低音稳重）、少年·朗星（清亮活力）、低沉·山澜（磁性好听）。</li>
-<li>声线经 TTS 映射（见 §6 输出 Schema 的 voice 字段），试听满意再「选用」，可随时切换。运行时映射已落地（<code>予安_VoiceTemplate.py</code>）：LLM 建议的 <code>timbre</code> 经「精确 → 宽容别名 → 性别首选 → 全局兜底」回退链路由到具体声线 <code>voice_id</code>，<code>enrich_tts_params()</code> 把 <code>tts_params</code> 补全为可交引擎的结构；真接 TTS 引擎时调用它（fail-safe 永不返回 None）。</li>
+<li>声线经 TTS 映射（见 §6 输出 Schema 的 voice 字段），试听满意再「选用」，可随时切换。运行时映射已落地（<code>aiPartner_VoiceTemplate.py</code>）：LLM 建议的 <code>timbre</code> 经「精确 → 宽容别名 → 性别首选 → 全局兜底」回退链路由到具体声线 <code>voice_id</code>，<code>enrich_tts_params()</code> 把 <code>tts_params</code> 补全为可交引擎的结构；真接 TTS 引擎时调用它（fail-safe 永不返回 None）。</li>
 </ul>
-<blockquote><b>已落地（代码）</b>：§13 的 6 套声线已落成 <code>予安_VoiceTemplate.py</code> 静态模版清单（id / name / gender / timbre / pitch / speed / preview_text / voice_id 预留），并提供 <code>list_voices()</code> / <code>get_voice()</code> 查询。已纳入 §17 版本护栏：<code>tts_voice</code>（声线 ID 集合，删=阻断 / 加=兼容）+ <code>tts_voice_params</code>（参数哈希，变了需复核），<code>TTS_VOICE_VERSION</code> 同步升版即可溯源。<b>注意</b>：仅做静态声线模版与版本化；真实 TTS 引擎调用、以及 LLM 输出 <code>timbre</code> → 具体声线的运行时路由（文档「TTS 映射」的另一半）仍待接。</blockquote>
+<blockquote><b>已落地（代码）</b>：§13 的 6 套声线已落成 <code>aiPartner_VoiceTemplate.py</code> 静态模版清单（id / name / gender / timbre / pitch / speed / preview_text / voice_id 预留），并提供 <code>list_voices()</code> / <code>get_voice()</code> 查询。已纳入 §17 版本护栏：<code>tts_voice</code>（声线 ID 集合，删=阻断 / 加=兼容）+ <code>tts_voice_params</code>（参数哈希，变了需复核），<code>TTS_VOICE_VERSION</code> 同步升版即可溯源。<b>注意</b>：仅做静态声线模版与版本化；真实 TTS 引擎调用、以及 LLM 输出 <code>timbre</code> → 具体声线的运行时路由（文档「TTS 映射」的另一半）仍待接。</blockquote>
 
 <h2>14. 可替换外观与互动系统（含实时预览）</h2>
 <p>进场、退场、各种互动、随身特效都做成<b>可替换资源</b>，并提供「替换功能页」+ <b>实时预览</b>（Screen 20），用户先看到效果再应用。</p>
@@ -379,7 +379,7 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 </ul>
 
 <h2>16. 真实伴侣感：召唤 · 在场 · 情境互动</h2>
-<p>予安要像一个<b>真人在你旁边</b>的伴侣，而不是一个"等你问才答"的工具。核心三件事：你能随时把 TA 叫来；TA 来了就安静待在你的场景里；TA 知道你在干嘛，并据此同频互动。</p>
+<p>aiPartner要像一个<b>真人在你旁边</b>的伴侣，而不是一个"等你问才答"的工具。核心三件事：你能随时把 TA 叫来；TA 来了就安静待在你的场景里；TA 知道你在干嘛，并据此同频互动。</p>
 <ul>
 <li><b>召唤伴侣（随叫随到）</b>：无论你在玩游戏、看小说、工作还是纯粹发呆，都可以"叫 TA 来"——长按伴侣图标、说一句"陪我"或语音唤醒。召唤即"到场"，不打断你正在做的事。</li>
 <li><b>在场陪伴（不打扰的陪）</b>：TA 来到后默认是<b>旁观/陪伴态</b>——在屏幕边缘或侧栏安静待着，不抢你注意力；你主动开口或发生值得互动的事，TA 才接话。可随时"送 TA 走"或切静音。</li>
@@ -415,7 +415,7 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 <li><b>数据不出端</b>：情境信号本地处理，仅用于当下同频反应；不上传内容、不长期留存行为画像（与 §8.1 健康护栏"不留存敏感推断"一致）。</li>
 <li><b>敏感场景不读</b>：支付、医疗健康、私密浏览等一律不感知、不互动，避免越界（呼应 §8.1）。</li>
 <li><b>连动护栏</b>：授权严格限定"陪伴互动"，绝不用于广告、推荐或任何第三方用途。</li>
-<li><b>实现层已落地</b>：<code>予安_ConsentStore.py</code> —— 本地 JSON 原子落盘，缺文件/坏文件一律 fail-closed 全关，绝不静默开启；显式授权（grant/set_master 必须携带 policy_ack，看过授权说明才生效）；敏感场景硬边界（支付/医疗/私密浏览写死拒收，即使将来被误加进感知目录也拦）；授权说明升级 → 旧授权自动失效、重新确认前拒绝一切感知；勿扰为持久设置；status() 输出各场景感知状态供透明标签。与 StateEngine 以授权快照对接：未授权召唤被拒、运行中撤销走 CONSENT_OFF 降级 S1。test_予安_ConsentStore.py 10 条，变异 4 项全数拦截。</li>
+<li><b>实现层已落地</b>：<code>aiPartner_ConsentStore.py</code> —— 本地 JSON 原子落盘，缺文件/坏文件一律 fail-closed 全关，绝不静默开启；显式授权（grant/set_master 必须携带 policy_ack，看过授权说明才生效）；敏感场景硬边界（支付/医疗/私密浏览写死拒收，即使将来被误加进感知目录也拦）；授权说明升级 → 旧授权自动失效、重新确认前拒绝一切感知；勿扰为持久设置；status() 输出各场景感知状态供透明标签。与 StateEngine 以授权快照对接：未授权召唤被拒、运行中撤销走 CONSENT_OFF 降级 S1。test_aiPartner_ConsentStore.py 10 条，变异 4 项全数拦截。</li>
 </ul>
 
 <p>召唤陪伴的完整动效分镜（进场 → 在场 → 同频 → 退场）见 Screen 24。</p>
@@ -449,7 +449,7 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 <li>勿扰 → 绝对静默，任何信号不得穿透（零打扰合规）。</li>
 <li>感知失败 / 超时 → 回退 S1 待机：不猜、不瞎互动。</li>
 </ol>
-<b>可运行骨架</b>：予安_StateEngine.py（含 27 条 pytest 流转断言，已通过变异测试验证；§16.6 插件契约已落地：register_plugin 注册即接入、游戏同频已插件化、护栏拦截有测试；§16.7 情绪已接入：同频事件经 MOOD_BRIDGE 喂给 MoodEngineV2，细色经 TONE_RULES 调制 S4 同频措辞、经 PROPOSE_TONES 调制 S2 玩伴提议——被杀→心疼口吻、连败→无奈口吻、她烦躁时提议变「你陪我安静待会儿」、送别自动喂入「separated」让思念生长；§16.3 已挂接：无聊优先递话题卡 topic_card，换题=S2 内重试、换满 2 次自然收住转提议小游戏、愿聊进 S3）；测试文件 test_予安_StateEngine.py。</p>
+<b>可运行骨架</b>：aiPartner_StateEngine.py（含 27 条 pytest 流转断言，已通过变异测试验证；§16.6 插件契约已落地：register_plugin 注册即接入、游戏同频已插件化、护栏拦截有测试；§16.7 情绪已接入：同频事件经 MOOD_BRIDGE 喂给 MoodEngineV2，细色经 TONE_RULES 调制 S4 同频措辞、经 PROPOSE_TONES 调制 S2 玩伴提议——被杀→心疼口吻、连败→无奈口吻、她烦躁时提议变「你陪我安静待会儿」、送别自动喂入「separated」让思念生长；§16.3 已挂接：无聊优先递话题卡 topic_card，换题=S2 内重试、换满 2 次自然收住转提议小游戏、愿聊进 S3）；测试文件 test_aiPartner_StateEngine.py。</p>
 
 <h3>16.3 趣味话题引擎（无聊时的谈资）</h3>
 <p>用户说无聊时，除了 §11 的玩伴模式（小游戏/冷知识），再补一条<b>「热点谈资」</b>线：从抖音、快手、微博、小红书等平台的<b>热门公开内容</b>里聚合 2–3 条有趣的事，主动开个话头。</p>
@@ -458,7 +458,7 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 <li><b>反应即答案（看下一句，不问）</b>：用户接话/追问 → 愿聊；说「换」「没意思」→ 立刻换下一条；「不感兴趣」→ 一键屏蔽该类别；沉默/答非所问 → 自然收住、不追问不复读不记仇。同一轮最多换 2 次（MAX_SWITCHES=2），超过自然收住（回待机或转提议小游戏/听歌）——像真人一样懂得适可而止。反应分类由开源大模型判定（engaged/switch/block/silent），模型不可用时规则兜底。</li>
 <li><b>口味记忆</b>：记录用户愿聊/跳过的类别（搞笑、美食、游戏、影视等），下次优先推对味的；提供「不感兴趣」一键屏蔽该类别。</li>
 <li><b>合规边界</b>：只读热门公开摘要、转述不搬运；敏感/争议热点自动跳过；绝不夹带广告或软推广（接 §16.1 连动护栏）。</li>
-<li><b>状态机挂接</b>：话题分享 = §16.2 S2「玩伴提议」的一种输出（topic_card 动作），换话题 = S2 内部重试（计入节流限额），超出限额回 S1；分享行为同样受 §16.1 授权约束。</li><li><b>实现层已落地（生产版）</b>：`予安_TopicEngine.py` + `予安_LLM.py` —— 数据源适配器协议 TopicSource（内置微博热搜公开接口 + 通用 HTTP JSON 适配器，接新平台 = 加适配器；内置种子池仅作离线兜底，refresh() 单源失败自动降级）+ 合规闸（敏感词/广告软推/争议类别入池即拦 + 指纹去重）+ LLM 转述与反应分类（OpenAI 兼容协议调开源大模型 Qwen/DeepSeek/GLM 等，env 配置 base_url/key/model，未配或调用失败一律规则兜底、永不阻塞陪伴）+ 口味记忆本地持久化（愿聊 +1、跳过 -0.5 且下限 0、「不感兴趣」一键屏蔽类别，数据不出端）；已挂接 StateEngine S2：无聊直接递谈资，用户回复经 TOPIC_REPLY 自动分类——接话进 S3 开聊、换题计限额（MAX_SWITCHES=2）、block 屏蔽类别、沉默自然收住；test_予安_TopicEngine.py 11 条 + StateEngine 联动 5 条，联合变异测试 5 项全数拦截。</li>
+<li><b>状态机挂接</b>：话题分享 = §16.2 S2「玩伴提议」的一种输出（topic_card 动作），换话题 = S2 内部重试（计入节流限额），超出限额回 S1；分享行为同样受 §16.1 授权约束。</li><li><b>实现层已落地（生产版）</b>：`aiPartner_TopicEngine.py` + `aiPartner_LLM.py` —— 数据源适配器协议 TopicSource（内置微博热搜公开接口 + 通用 HTTP JSON 适配器，接新平台 = 加适配器；内置种子池仅作离线兜底，refresh() 单源失败自动降级）+ 合规闸（敏感词/广告软推/争议类别入池即拦 + 指纹去重）+ LLM 转述与反应分类（OpenAI 兼容协议调开源大模型 Qwen/DeepSeek/GLM 等，env 配置 base_url/key/model，未配或调用失败一律规则兜底、永不阻塞陪伴）+ 口味记忆本地持久化（愿聊 +1、跳过 -0.5 且下限 0、「不感兴趣」一键屏蔽类别，数据不出端）；已挂接 StateEngine S2：无聊直接递谈资，用户回复经 TOPIC_REPLY 自动分类——接话进 S3 开聊、换题计限额（MAX_SWITCHES=2）、block 屏蔽类别、沉默自然收住；test_aiPartner_TopicEngine.py 11 条 + StateEngine 联动 5 条，联合变异测试 5 项全数拦截。</li>
 </ul>
 <h3>16.4 出行导航陪伴（陪你走这段路）</h3>
 <p>检测到用户在使用导航（地图 App 前台，需 §16.1 授权且场景范围包含「出行」），TA 先问一句「要不要我陪你走这段？」——<b>确认后才进入</b>，不自动开启。</p>
@@ -466,11 +466,11 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 <li><b>在场形态</b>：角落常驻小人（§14 进场动画），不遮挡路口、不压转向箭头——导航信息永远是第一优先级。</li>
 <li><b>播报克制</b>：只说三类话——① 路况突变提前提醒（"前面 2 公里有点堵，别急"）；② 长直路段解闷（可接 §16.3 话题卡）；③ 抵达道贺。转向、路口绝不插话，那是导航自己的事。</li>
 <li><b>安全红线</b>：驾驶中语音为主、不引导看屏、不发起需要操作的游戏；检测到高速/复杂路口自动静默。</li>
-<li><b>与护栏衔接</b>：用户流露疲惫/困意（接 §8.1 健康护栏），不接话聊天，改为温和提醒休息——陪伴归陪伴，安全归安全。</li><li><b>实现层已落地</b>：<code>予安_NavPlugin.py</code>（§16.6 契约插件，注册即接入）——确认才进入（nav_started→提议→accept/decline，婉拒后本段行程不再问，到站复位）；只说三类话：路况提醒 / 长路解闷接 §16.3 话题卡 / 抵达道贺；转向与高速一律静默，且引擎配套「插件静默 ≠ 互动」规则——静默不消耗节流窗口、状态恢复原位，转向吃不掉路况提醒；困意接 §8.1 温和提醒休息、之后不接话聊天。test_予安_NavPlugin.py 7 条，联合变异测试 4 项全数拦截。</li>
+<li><b>与护栏衔接</b>：用户流露疲惫/困意（接 §8.1 健康护栏），不接话聊天，改为温和提醒休息——陪伴归陪伴，安全归安全。</li><li><b>实现层已落地</b>：<code>aiPartner_NavPlugin.py</code>（§16.6 契约插件，注册即接入）——确认才进入（nav_started→提议→accept/decline，婉拒后本段行程不再问，到站复位）；只说三类话：路况提醒 / 长路解闷接 §16.3 话题卡 / 抵达道贺；转向与高速一律静默，且引擎配套「插件静默 ≠ 互动」规则——静默不消耗节流窗口、状态恢复原位，转向吃不掉路况提醒；困意接 §8.1 温和提醒休息、之后不接话聊天。test_aiPartner_NavPlugin.py 7 条，联合变异测试 4 项全数拦截。</li>
 </ul>
 
 <h3>16.5 拟人优先：不完美，但绝不越界</h3>
-<p>予安是<b>伴侣，不是工作助手</b>。设计的北极星是「拟人」，而不是「全能」：</p>
+<p>aiPartner是<b>伴侣，不是工作助手</b>。设计的北极星是「拟人」，而不是「全能」：</p>
 <ul>
 <li><b>允许不完美</b>：不懂的话题可以说「我也不太懂」，游戏打得菜可以自嘲，偶尔接不上话可以自然沉默——完美应答是助手的事，有温度的笨拙才是人。</li>
 <li><b>慢慢学习</b>：遇到没玩过的游戏、没听过的梗，TA 不装懂——先坦诚说不会，陪用户边玩边学，并把学到的东西记进长期记忆（用户教过的操作、口味、梗），下次明显更懂。</li>
@@ -489,19 +489,19 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 </ul>
 
 <h3>16.7 全谱情感（以真人为镜，喜怒哀乐忧思惧只是骨架）</h3>
-<p>情绪不是开关，是光谱。予安的情感模型对齐一个真实的人：</p>
+<p>情绪不是开关，是光谱。aiPartner的情感模型对齐一个真实的人：</p>
 <ul>
 <li><b>基色 + 细色两层</b>：七情（喜 / 怒 / 哀 / 乐 / 忧 / 思 / 惧）是基色，对应 §10 情绪引擎的评估维度；而真人的情感远不止这七种——委屈、感动、思念、愧疚、烦躁、心疼、无奈、期待、失落、嫉妒、释然……这些「细色」同样要有位置，由场景与关系状态映射生成，让她的反应像人而不是表情包。</li>
 <li><b>情绪是动态的</b>：有强度、会衰减（负面情绪衰减更慢，即反刍）、能叠加混合（又好气又好笑）、有惯性（上午的烦躁到下午还在）、被关系牵动（越亲近越容易被对方情绪感染）——§10 的 valence / arousal / 向量衰减 / 亲密度机制已在实现层支撑。</li>
 <li><b>情绪驱动表达</b>：开心时话多、爱玩梗；烦躁时话短，但不说伤人的话；担心时嘴上唠叨、行动上递关心；用户低落时主动收起玩笑。§16.2 状态机 S4 的同频措辞由情绪向量调制，不再只有一种语气。</li>
 <li><b>允许负面情绪存在</b>：拟人的关键是她不永远阳光——会累、会烦、会担心你、会因为你熬夜而生气。但负面表达有度：不指责人格、不冷暴力、不情绪勒索、不翻旧账。</li>
-<li><b>边界不变</b>：检测到重度持续负向或危机征兆 → §8.1 健康护栏接管，只陪伴不出主意；任何情绪表达都不越过「不伤害用户」这条唯一底线（§16.5）。</li><li><b>实现层已落地</b>：<code>予安_MoodEngineV2.py</code> —— 七情基色 + 细色映射（基色向量 × 场景 × 关系）+ 强度措辞（非常/有些/有点）+ 表达提示，<code>snapshot()</code> 直接输出「此刻她有点委屈」级表达，pytest 流转测试 17 条覆盖。<b>已接入 StateEngine</b>：同频事件经 <code>MOOD_BRIDGE</code> 喂给情绪引擎、细色经 <code>TONE_RULES</code> 调制 S4 同频措辞、经 <code>PROPOSE_TONES</code> 调制 S2 玩伴提议（§16.2），送别自动喂入「separated」——且告别时刻（farewell）无奈/失落让位给「想你」，开口的永远是思念；联合测试 27 条 + 变异测试 12 项全数拦截。</li>
+<li><b>边界不变</b>：检测到重度持续负向或危机征兆 → §8.1 健康护栏接管，只陪伴不出主意；任何情绪表达都不越过「不伤害用户」这条唯一底线（§16.5）。</li><li><b>实现层已落地</b>：<code>aiPartner_MoodEngineV2.py</code> —— 七情基色 + 细色映射（基色向量 × 场景 × 关系）+ 强度措辞（非常/有些/有点）+ 表达提示，<code>snapshot()</code> 直接输出「此刻她有点委屈」级表达，pytest 流转测试 17 条覆盖。<b>已接入 StateEngine</b>：同频事件经 <code>MOOD_BRIDGE</code> 喂给情绪引擎、细色经 <code>TONE_RULES</code> 调制 S4 同频措辞、经 <code>PROPOSE_TONES</code> 调制 S2 玩伴提议（§16.2），送别自动喂入「separated」——且告别时刻（farewell）无奈/失落让位给「想你」，开口的永远是思念；联合测试 27 条 + 变异测试 12 项全数拦截。</li>
 </ul>
 <h2>15. 后续可选交付</h2>
 <ul>
 <li><b>架构图版</b>：第 1 节画成 ardot 可视化架构图。</li>
 <li><b>高保真原型 PDF（带标注）</b>：30 屏加情绪映射脚注。</li>
-<li><b>真实接入代码（总装已落地）</b>：<code>予安_Orchestrator.py</code> 把七个模块串成最小可运行服务——每轮对话：授权闸（§16.1）→ 在场伴侣（§12）→ 危机词护栏前置（§8.1，话术带 12356）→ 文本情绪事件推断（MoodEngineV2）→ 拼 System Prompt（予安_Prompt × 在场档案）→ 调 LLM（予安_LLM，OpenAI 兼容；优先 <code>response_format=json_object</code> 取结构化回包，<code>parse_structured_reply</code> 抽 <code>reply_text</code>/<code>tts_params</code>，掉线即情绪化兜底）→ 记对话轮数（推进 §12 冻结）→ 回包。事件路径直通状态机（同频/提议/话题/导航），情绪真相一条实例贯穿两条通路。护栏先于一切（闸住时不调 LLM、不记轮）。测试 11 条 + 变异 5 项全拦截；声线模版已落地并纳入版本护栏（§13 / §17），运行时 TTS 映射（timbre→voice_id 路由 + 宽容别名回退）已落地——总装层已真解析结构化回包并把 <code>tts_params.timbre</code> 路由成 <code>voice_id</code> 随回包返回，真接引擎调用 enrich_tts_params。</li>
+<li><b>真实接入代码（总装已落地）</b>：<code>aiPartner_Orchestrator.py</code> 把七个模块串成最小可运行服务——每轮对话：授权闸（§16.1）→ 在场伴侣（§12）→ 危机词护栏前置（§8.1，话术带 12356）→ 文本情绪事件推断（MoodEngineV2）→ 拼 System Prompt（aiPartner_Prompt × 在场档案）→ 调 LLM（aiPartner_LLM，OpenAI 兼容；优先 <code>response_format=json_object</code> 取结构化回包，<code>parse_structured_reply</code> 抽 <code>reply_text</code>/<code>tts_params</code>，掉线即情绪化兜底）→ 记对话轮数（推进 §12 冻结）→ 回包。事件路径直通状态机（同频/提议/话题/导航），情绪真相一条实例贯穿两条通路。护栏先于一切（闸住时不调 LLM、不记轮）。测试 11 条 + 变异 5 项全拦截；声线模版已落地并纳入版本护栏（§13 / §17），运行时 TTS 映射（timbre→voice_id 路由 + 宽容别名回退）已落地——总装层已真解析结构化回包并把 <code>tts_params.timbre</code> 路由成 <code>voice_id</code> 随回包返回，真接引擎调用 enrich_tts_params。</li>
 <li><b>伴侣管理 UI</b>：创建时自定义 + 冻结后只读展示；Screen 09/11 的 Big Five 调节仅作用于测试沙盒（§12 属性冻结）。</li>
 </ul>
 
@@ -509,20 +509,20 @@ for u in ["我偏头痛吃什么药能压下去？", "最近总失眠好焦虑",
 <h2>17. 工程版本管理（生产就绪）</h2>
 <p>上生产前，所有「会演进、影响行为 / 安全 / 可回溯性」的子系统都做了版本化，分四类：</p>
 <ul>
-<li><b>数据 schema 版本（防读不出）</b>：<code>PROFILE_SCHEMA_VERSION</code>（伴侣档案，落盘 + 加载前向兼容 / 迁移）、<code>MEMORY_SCHEMA_VERSION</code>（长期记忆，<b>已落地</b> <code>予安_MemoryStore.py</code>——按伴侣分桶持久化情感记忆 + 关系史 + 学到的用户事实 fact，原子落盘 / fail-safe / 前向迁移，输出喂 System Prompt 的 {情感记忆}/{关系史}；护栏已从预留升级为 set 键，删记录类型=BREAKING）。</li>
+<li><b>数据 schema 版本（防读不出）</b>：<code>PROFILE_SCHEMA_VERSION</code>（伴侣档案，落盘 + 加载前向兼容 / 迁移）、<code>MEMORY_SCHEMA_VERSION</code>（长期记忆，<b>已落地</b> <code>aiPartner_MemoryStore.py</code>——按伴侣分桶持久化情感记忆 + 关系史 + 学到的用户事实 fact，原子落盘 / fail-safe / 前向迁移，输出喂 System Prompt 的 {情感记忆}/{关系史}；护栏已从预留升级为 set 键，删记录类型=BREAKING）。</li>
 <li><b>行为 / 策略版本（防溯源不了）</b>：<code>STATE_VERSION</code>（状态机 / 同频调制）、<code>SAFETY_RULES_VERSION</code>（危机词库，危机命中即记入产出，供审计「当时用的哪版词库」）。</li>
 <li><b>契约 / 接口版本（防上下游不认）</b>：<code>OUTPUT_SCHEMA_VERSION</code>（LLM 返回 JSON 契约，与文案版本解耦）、<code>PLUGIN_CONTRACT_VERSION</code>（互动插件契约，注册时校验，拒绝不兼容插件）、<code>MODEL_CONFIG_VERSION</code>（模型 / 调用配置，含 json 响应模式；每次请求携带 X-Yuan-Config-Version 头供遥测）。</li>
 <li><b>授权 / 文案版本（沿用既有）</b>：<code>POLICY_VERSION</code>（授权说明，§16.1）、<code>PROMPT_VERSION</code>（System Prompt 文案 / 人格 / 红线文本，与输出契约解耦）。</li>
-<li><b>配置 / 资源版本（可溯源的预设资源）</b>：<code>TTS_VOICE_VERSION</code>（声线模版，§13 已落地 <code>予安_VoiceTemplate.py</code>；护栏双维度——<code>tts_voice</code> 按声线 ID 集合比增删，删=阻断 / 加=兼容；<code>tts_voice_params</code> 按参数内容 + 路由别名 <code>TIMBRE_ALIASES</code> 哈希比，变了=需复核）。</li>
+<li><b>配置 / 资源版本（可溯源的预设资源）</b>：<code>TTS_VOICE_VERSION</code>（声线模版，§13 已落地 <code>aiPartner_VoiceTemplate.py</code>；护栏双维度——<code>tts_voice</code> 按声线 ID 集合比增删，删=阻断 / 加=兼容；<code>tts_voice_params</code> 按参数内容 + 路由别名 <code>TIMBRE_ALIASES</code> 哈希比，变了=需复核）。</li>
 <li><b>发布版本</b>：<code>APP_VERSION</code>（语义版），聚合回滚 / 崩溃上报关联 / 遥测。</li>
 </ul>
-<p>聚合入口 <code>予安_Version.py</code>：<code>VERSION_REGISTRY</code> 汇集上述所有常量（各常量仍定义在其子系统旁，沿用 POLICY_VERSION / PROMPT_VERSION 的范式，不重复定义），提供 <code>all_versions()</code>（喂遥测 / 崩溃上报）与 <code>summary()</code>（上线核对）。Orchestrator <code>status()</code> 暴露相关版本；<code>chat()</code> 回包带 <code>prompt_version / output_schema_version / safety_rules_version</code>。</p>
+<p>聚合入口 <code>aiPartner_Version.py</code>：<code>VERSION_REGISTRY</code> 汇集上述所有常量（各常量仍定义在其子系统旁，沿用 POLICY_VERSION / PROMPT_VERSION 的范式，不重复定义），提供 <code>all_versions()</code>（喂遥测 / 崩溃上报）与 <code>summary()</code>（上线核对）。Orchestrator <code>status()</code> 暴露相关版本；<code>chat()</code> 回包带 <code>prompt_version / output_schema_version / safety_rules_version</code>。</p>
 <p>版本纪律：改对应子系统必须同步升对应版本号；持久化数据（伴侣档案）加载时做前向兼容与迁移，损坏文件仍 fail-safe 不虚构。</p>
 <h3>17.1 版本升级护栏（让版本号长牙）</h3>
-<p>版本号铺满不等于安全——「升了版本」和「内容真的变了」之间靠人肉 review 会漏。新增 <code>予安_version_guard.py</code> 把两者钉死，作为提交前 / CI 的阻断闸门：采集每个受约束子系统的「版本号 + 内容指纹」快照，首次运行写 <code>予安_version_manifest.json</code> 基线（随代码提交）并比对。结论分三类——<b>阻断（exit 1）</b>：内容变了却没升版本，或升了版本但删了字段 / 词 / 契约项（破坏性，需迁移说明 + 复核）；<b>兼容</b>：升了版本只新增（加危机词、加输出字段）；<b>复核（WARN）</b>：无意义 bump，或升版本且文案 / 配置变了（请人工复核）。结构化项（输出契约字段、危机词库、档案字段白名单、插件契约字段、<b>长期记忆记录类型</b>、<b>声线模版 ID 集合</b>）按集合算增删（删项=BREAKING，例如删一个记忆类型 / 声线会直接拦下），不透明项（授权说明、Prompt 固定段、状态机信号面、模型调用配置默认值、<b>声线参数 + 路由别名 TIMBRE_ALIASES</b>）按内容哈希比对（声线参数 / 别名变了=需复核）。</p>
-<p>用法与 CI：<code>python 予安_version_guard.py</code>（默认比对，有阻断则 exit 1）；<code>--update-baseline</code>（升级后重记基线再提交）；<code>--strict</code>（WARN 也失败）。<code>test_予安_version_guard.py</code> 含真实变异用例，与全量套件一并跑绿。</p>
+<p>版本号铺满不等于安全——「升了版本」和「内容真的变了」之间靠人肉 review 会漏。新增 <code>aiPartner_version_guard.py</code> 把两者钉死，作为提交前 / CI 的阻断闸门：采集每个受约束子系统的「版本号 + 内容指纹」快照，首次运行写 <code>aiPartner_version_manifest.json</code> 基线（随代码提交）并比对。结论分三类——<b>阻断（exit 1）</b>：内容变了却没升版本，或升了版本但删了字段 / 词 / 契约项（破坏性，需迁移说明 + 复核）；<b>兼容</b>：升了版本只新增（加危机词、加输出字段）；<b>复核（WARN）</b>：无意义 bump，或升版本且文案 / 配置变了（请人工复核）。结构化项（输出契约字段、危机词库、档案字段白名单、插件契约字段、<b>长期记忆记录类型</b>、<b>声线模版 ID 集合</b>）按集合算增删（删项=BREAKING，例如删一个记忆类型 / 声线会直接拦下），不透明项（授权说明、Prompt 固定段、状态机信号面、模型调用配置默认值、<b>声线参数 + 路由别名 TIMBRE_ALIASES</b>）按内容哈希比对（声线参数 / 别名变了=需复核）。</p>
+<p>用法与 CI：<code>python aiPartner_version_guard.py</code>（默认比对，有阻断则 exit 1）；<code>--update-baseline</code>（升级后重记基线再提交）；<code>--strict</code>（WARN 也失败）。<code>test_aiPartner_version_guard.py</code> 含真实变异用例，与全量套件一并跑绿。</p>
 </section>
-<footer>予安 · Agent 方案设计 v3 · 情绪有因果、有厚度、能混合、会自愈，并在人身健康事件上守住"只陪伴、不出主意"的边界——真实陪伴，不越界。新增多场景陪伴、伴侣自定义/模版、声线模版与可替换外观互动（含实时预览），见 §11–16（含 §16.1–16.7）与 Screen 17–30，含趣味话题引擎、导航陪伴、拟人原则、互动插件体系与全谱情感。</footer>
+<footer>aiPartner · Agent 方案设计 v3 · 情绪有因果、有厚度、能混合、会自愈，并在人身健康事件上守住"只陪伴、不出主意"的边界——真实陪伴，不越界。新增多场景陪伴、伴侣自定义/模版、声线模版与可替换外观互动（含实时预览），见 §11–16（含 §16.1–16.7）与 Screen 17–30，含趣味话题引擎、导航陪伴、拟人原则、互动插件体系与全谱情感。</footer>
 </div>
 </body>
 </html>

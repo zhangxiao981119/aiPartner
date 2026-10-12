@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-予安_NavPlugin 测试（§16.4 + §16.6 契约接入）
-运行：venv 的 python -m pytest test_予安_NavPlugin.py -q
+aiPartner_NavPlugin 测试（§16.4 + §16.6 契约接入）
+运行：venv 的 python -m pytest test_aiPartner_NavPlugin.py -q
 """
 
 import os
@@ -9,9 +9,9 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import 予安_StateEngine as se  # noqa: E402
-import 予安_NavPlugin as nav_mod  # noqa: E402
-from 予安_TopicEngine import TopicEngine  # noqa: E402
+import aiPartner_StateEngine as se  # noqa: E402
+import aiPartner_NavPlugin as nav_mod  # noqa: E402
+from aiPartner_TopicEngine import TopicEngine  # noqa: E402
 
 Sig, State, Consent, StateEngine = se.Sig, se.State, se.Consent, se.StateEngine
 

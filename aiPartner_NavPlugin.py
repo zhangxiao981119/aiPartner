@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-予安 · 导航陪伴插件 NavCompanionPlugin（§16.4，按 §16.6 契约接入）
+aiPartner · 导航陪伴插件 NavCompanionPlugin（§16.4，按 §16.6 契约接入）
 ==================================================================
 
 「陪你走这段路」——一个标准的外置插件：InteractionPlugin 子类，
@@ -22,7 +22,7 @@ register_plugin() 注册即接入，unregister_plugin() 卸载即失效。
 生产版上层负责把「检测到导航前台」转成 nav_started 事件（需授权 + 场景在「出行」内）。
 """
 
-from 予安_StateEngine import Action, InteractionPlugin, Sig
+from aiPartner_StateEngine import Action, InteractionPlugin, Sig
 
 
 class NavCompanionPlugin(InteractionPlugin):
@@ -102,8 +102,8 @@ class NavCompanionPlugin(InteractionPlugin):
 # ────────────────────────── 演示 ──────────────────────────
 
 if __name__ == "__main__":
-    from 予安_StateEngine import Consent, StateEngine
-    from 予安_TopicEngine import TopicEngine
+    from aiPartner_StateEngine import Consent, StateEngine
+    from aiPartner_TopicEngine import TopicEngine
 
     t = [1000.0]
     topics = TopicEngine()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安_LLM 测试：配置版本常量 + 请求携带配置版本头 + 结构化输出解析（§6.1 / §6）。"""
+"""aiPartner_LLM 测试：配置版本常量 + 请求携带配置版本头 + 结构化输出解析（§6.1 / §6）。"""
 
 import json
 import os
@@ -10,7 +10,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import 予安_LLM as llm_mod
+import aiPartner_LLM as llm_mod
 
 LLMClient = llm_mod.LLMClient
 
@@ -95,8 +95,8 @@ def test_parse_structured_reply_fenced_and_prose_wrapped():
 
 def test_reply_contract_keys_match_output_block():
     """契约键一致性：REPLY_CONTRACT_KEYS 必须与 Prompt._OUTPUT_BLOCK 不脱钩。"""
-    from 予安_version_guard import _parse_output_keys
-    import 予安_Prompt as PR
+    from aiPartner_version_guard import _parse_output_keys
+    import aiPartner_Prompt as PR
     assert set(llm_mod.REPLY_CONTRACT_KEYS) == set(_parse_output_keys(PR._OUTPUT_BLOCK))
 
 

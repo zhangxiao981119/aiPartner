@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · System Prompt 拼装（§6.1 实现层）
+"""aiPartner · System Prompt 拼装（§6.1 实现层）
 ====================================================
 
 §6.1 的【人格】段不再写死——从 CompanionManager 的**在场伴侣档案**动态拼装：
@@ -27,8 +27,8 @@
   - version_compatible / needs_migration / migration_note：prompt 永远用最新模板渲染
     （前向兼容，不重聊），只标记历史会话始于旧版，供审计。
 
-自测：python 予安_Prompt.py（打印一份完整示例，含版本标记与日志演示）。
-测试：test_予安_Prompt.py（pytest）
+自测：python aiPartner_Prompt.py（打印一份完整示例，含版本标记与日志演示）。
+测试：test_aiPartner_Prompt.py（pytest）
 """
 
 from __future__ import annotations
@@ -178,12 +178,12 @@ class PromptVersionLog:
     """每轮记录 (时间戳, 伴侣id, prompt版本) 的追加式审计日志。
 
     原子写（tmp + os.replace，绝不落半截）；文件缺失/损坏 → fail-safe 空日志，不崩。
-    用于回答「予安 说那句话时跑的是哪版 prompt」，以及盘点所有用过的版本。
+    用于回答「aiPartner 说那句话时跑的是哪版 prompt」，以及盘点所有用过的版本。
     """
 
     def __init__(self, path: str | None = None, clock=None):
         self.path = path or os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                         "予安_prompt_versions.json")
+                                         "aiPartner_prompt_versions.json")
         self.clock = clock or (lambda: __import__("time").time())
         self._entries: list = []
         self._load()
@@ -245,7 +245,7 @@ if __name__ == "__main__":
 
     lines = []
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from 予安_CompanionManager import CompanionManager
+    from aiPartner_CompanionManager import CompanionManager
     import tempfile
 
     store = CompanionManager(path=os.path.join(tempfile.mkdtemp(), "companions.json"))

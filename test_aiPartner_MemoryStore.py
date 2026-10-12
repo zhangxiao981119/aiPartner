@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安_MemoryStore 测试（pytest）
+"""aiPartner_MemoryStore 测试（pytest）
 ====================================
 覆盖：
   - schema 版本落盘 / 旧版前向迁移 / 损坏文件 fail-safe
@@ -19,7 +19,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-import 予安_MemoryStore as MS
+import aiPartner_MemoryStore as MS
 
 
 def _store():

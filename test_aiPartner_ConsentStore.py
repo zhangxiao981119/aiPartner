@@ -7,9 +7,9 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import 予安_ConsentStore as cm
-from 予安_ConsentStore import ConsentStore
-import 予安_StateEngine as se
+import aiPartner_ConsentStore as cm
+from aiPartner_ConsentStore import ConsentStore
+import aiPartner_StateEngine as se
 
 T = 1000.0
 CLOCK = lambda: T

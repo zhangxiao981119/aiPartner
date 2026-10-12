@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安_CompanionManager 测试：创建/切换/删除 + 10 轮属性冻结 + 测试模式审计。"""
+"""aiPartner_CompanionManager 测试：创建/切换/删除 + 10 轮属性冻结 + 测试模式审计。"""
 
 import json
 import os
@@ -9,7 +9,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import 予安_CompanionManager as cm
+import aiPartner_CompanionManager as cm
 
 CLOCK = [1000.0]
 
@@ -107,7 +107,7 @@ def test_delete_removes_and_clears_active(tmp_path):
     m = make(tmp_path, template="知心姐姐")
     other = m.create({"name": "林晚"})
     m.delete(other["id"])
-    assert m.active()["name"] == "予安"              # 删别人不影响在场
+    assert m.active()["name"] == "aiPartner"              # 删别人不影响在场
     with pytest.raises(ValueError):
         m.switch(other["id"])
     active_id = m.active()["id"]
@@ -140,7 +140,7 @@ def test_corrupted_file_failsafe_empty(tmp_path):
     m = cm.CompanionManager(path=path, clock=lambda: CLOCK[0] + 1)
     assert m.list_all() == [] and m.active() is None
     # 且能从空档案继续正常工作
-    p = m.create({"name": "予安"})
+    p = m.create({"name": "aiPartner"})
     assert m.active()["id"] == p["id"]
 
 
@@ -154,7 +154,7 @@ def test_profile_schema_version_persisted(tmp_path):
         assert json.load(f)["schema_version"] == cm.PROFILE_SCHEMA_VERSION
     m2 = cm.CompanionManager(path=m.path, clock=lambda: CLOCK[0] + 1)
     assert m2.status()["schema_version"] == cm.PROFILE_SCHEMA_VERSION
-    assert m2.active()["name"] == "予安"                   # 数据没丢
+    assert m2.active()["name"] == "aiPartner"                   # 数据没丢
 
 
 def test_pre_versioning_file_loads_as_current(tmp_path):

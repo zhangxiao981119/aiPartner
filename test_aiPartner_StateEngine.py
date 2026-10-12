@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-予安_StateEngine 流转测试（§16.2）
-运行：venv 的 python -m pytest test_予安_StateEngine.py -q
+aiPartner_StateEngine 流转测试（§16.2）
+运行：venv 的 python -m pytest test_aiPartner_StateEngine.py -q
 """
 
 import os
@@ -11,7 +11,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import 予安_StateEngine as mod  # noqa: E402
+import aiPartner_StateEngine as mod  # noqa: E402
 
 Sig, State, Consent, StateEngine = mod.Sig, mod.State, mod.Consent, mod.StateEngine
 
@@ -195,7 +195,7 @@ def test_guard_intercepts_out_of_contract_output():
 
 # ────────────── §10 + §16.7 情绪桥接：细色调制同频措辞 ──────────────
 
-import 予安_MoodEngineV2 as mood_mod  # noqa: E402
+import aiPartner_MoodEngineV2 as mood_mod  # noqa: E402
 
 MoodEngineV2 = mood_mod.MoodEngineV2
 
@@ -264,7 +264,7 @@ def test_mood_unbridged_event_keeps_base_text():
 
 # ────────────── §16.7 S2 提议挂情绪 + §16.3 话题卡挂接 ──────────────
 
-import 予安_TopicEngine as topic_mod  # noqa: E402
+import aiPartner_TopicEngine as topic_mod  # noqa: E402
 
 TOPIC_SEED = [("A 段子", "搞笑", "微博热搜"), ("B 剧集", "影视", "抖音"),
               ("C 食谱", "美食", "小红书")]

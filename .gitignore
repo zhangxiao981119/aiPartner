@@ -10,10 +10,10 @@ venv/
 .workbuddy/
 
 # ── 运行时用户数据（含隐私，不入库） ──
-予安_companions.json
-予安_memory.json
-予安_consent.json
-予安_mood.json
+aiPartner_companions.json
+aiPartner_memory.json
+aiPartner_consent.json
+aiPartner_mood.json
 
 # ── 编辑器 / 系统 ──
 .vscode/

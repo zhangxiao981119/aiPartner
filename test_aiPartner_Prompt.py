@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安_Prompt 测试：人格段动态拼装、标签→Big Five 映射、护栏固定段、档案联动。"""
+"""aiPartner_Prompt 测试：人格段动态拼装、标签→Big Five 映射、护栏固定段、档案联动。"""
 
 import os
 import sys
@@ -8,8 +8,8 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import 予安_CompanionManager as cm
-import 予安_Prompt as pm
+import aiPartner_CompanionManager as cm
+import aiPartner_Prompt as pm
 
 CLOCK = [1000.0]
 
@@ -26,11 +26,11 @@ def make_manager(tmp_path, template="知心姐姐"):
 
 def test_persona_contains_profile_fields():
     """名字/性别/年龄/职业/简介/口头禅/标签全部进入人格段。"""
-    p = {"name": "予安", "gender": "女", "age": 28, "tags": ["温柔", "理性"],
+    p = {"name": "aiPartner", "gender": "女", "age": 28, "tags": ["温柔", "理性"],
          "occupation": "心理咨询师", "catchphrase": "我在听。",
          "bio": "温暖治愈的知心姐姐。"}
     s = pm.persona_section(p)
-    for frag in ("「予安」", "女", "28", "心理咨询师", "温暖治愈的知心姐姐",
+    for frag in ("「aiPartner」", "女", "28", "心理咨询师", "温暖治愈的知心姐姐",
                  "「我在听。」", "温柔·理性", "绝不制造情感依赖"):
         assert frag in s
 
@@ -84,7 +84,7 @@ def test_guardrail_blocks_always_present():
 
 def test_dynamic_slots_fill_or_placeholder():
     """情绪/依恋/记忆等槽位：传了就出现，缺席给占位符。"""
-    p = {"name": "予安"}
+    p = {"name": "aiPartner"}
     filled = pm.build_system_prompt(p, dominant="joy", blend="fun", bond=6.5,
                                     user_emotion="疲惫")
     assert "主情绪=joy(混合:fun)" in filled and "bond=6.5" in filled
@@ -100,11 +100,11 @@ def test_integration_switch_changes_persona(tmp_path):
     """在场伴侣切换 → 人格段跟着换人；冻结后档案不变 → 人格段稳定。"""
     m = make_manager(tmp_path)                          # 知心姐姐
     before = pm.build_system_prompt(m.active())
-    assert "「予安」" in before
+    assert "「aiPartner」" in before
     other = m.create({"name": "林晚", "tags": ["元气"]})
     m.switch(other["id"])
     after = pm.build_system_prompt(m.active())
-    assert "「林晚」" in after and "「予安」" not in after
+    assert "「林晚」" in after and "「aiPartner」" not in after
     assert pm.big_five_from_profile(m.active())["E"] > pm.BIG_FIVE_BASE["E"]
 
 
@@ -123,7 +123,7 @@ def test_integration_frozen_profile_keeps_persona_stable(tmp_path):
 
 def test_prompt_version_embedded_in_output():
     """拼好的 System Prompt 顶部带版本标记，产出可溯源。"""
-    p = pm.build_system_prompt({"name": "予安"})
+    p = pm.build_system_prompt({"name": "aiPartner"})
     assert p.startswith("### [SYSTEM-META] prompt_version=")
     assert pm.PROMPT_VERSION in p
     # 版本标记在人格段之前，不与护栏污染判断冲突
@@ -146,7 +146,7 @@ def test_prompt_version_log_records_and_persists(tmp_path):
     """审计日志：每轮记录、可落盘重载、可盘点用过的版本。"""
     log = pm.PromptVersionLog(path=os.path.join(tmp_path, "pv.json"),
                               clock=lambda: 1000.0)
-    log.record("予安")
+    log.record("aiPartner")
     log.record("林晚")
     assert log.count() == 2
     assert log.versions_used() == {pm.PROMPT_VERSION}
@@ -155,7 +155,7 @@ def test_prompt_version_log_records_and_persists(tmp_path):
     # 重载后仍在
     log2 = pm.PromptVersionLog(path=log.path, clock=lambda: 1000.0)
     assert log2.count() == 2
-    assert "予安" in {e["companion_id"] for e in log2.entries()}
+    assert "aiPartner" in {e["companion_id"] for e in log2.entries()}
 
 
 def test_prompt_version_log_fail_safe_on_corrupt(tmp_path):
@@ -165,7 +165,7 @@ def test_prompt_version_log_fail_safe_on_corrupt(tmp_path):
         f.write("{这不是合法json")                    # 写坏
     log = pm.PromptVersionLog(path=path)
     assert log.count() == 0                            # 损坏即空，不静默造假
-    log.record("予安")                                 # 仍能正常写入
+    log.record("aiPartner")                                 # 仍能正常写入
     assert log.count() == 1
 
 
@@ -174,7 +174,7 @@ def test_prompt_version_log_fail_safe_on_corrupt(tmp_path):
 def test_output_schema_version_exists_and_contract_in_prompt():
     """OUTPUT_SCHEMA_VERSION 存在；输出契约字段出现在 System Prompt 里。"""
     assert pm.OUTPUT_SCHEMA_VERSION and isinstance(pm.OUTPUT_SCHEMA_VERSION, str)
-    p = pm.build_system_prompt({"name": "予安"})
+    p = pm.build_system_prompt({"name": "aiPartner"})
     for field in ("reply_text", "emotion", "mood", "bond",
                   "tts_params", "animation", "action"):
         assert field in p                              # 契约字段齐备，受版本约束

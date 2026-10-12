@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · 伴侣档案与生命周期管理（§12 实现层）
+"""aiPartner · 伴侣档案与生命周期管理（§12 实现层）
 
 设计口径（用户 2026-10-10 定）：
   - 用户可以创建新的伴侣，而不是在已有伴侣上改性格——改的是「人」，换的是「伴侣」。
@@ -17,7 +17,7 @@
         文件缺失/损坏一律 fail-safe（空档案，绝不虚构一个伴侣）。
 
 自测：直接运行本文件看完整生命周期演示（创建 → 相处 → 冻结 → 切换/删除）。
-测试：test_予安_CompanionManager.py（pytest）
+测试：test_aiPartner_CompanionManager.py（pytest）
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ _REQUIRED_PROFILE = ("name",)
 
 # §12 自带模版（开箱即用）：模版只是创建时的起点，冻结规则对模版一视同仁
 TEMPLATES = {
-    "知心姐姐": {"name": "予安", "gender": "女", "age": 28, "tags": ["温柔", "理性"],
+    "知心姐姐": {"name": "aiPartner", "gender": "女", "age": 28, "tags": ["温柔", "理性"],
                "occupation": "心理咨询师", "catchphrase": "我在听。",
                "bio": "温暖治愈的知心姐姐。", "voice": "甜暖·小雨"},
     "沉稳大叔": {"name": "陆沉", "gender": "男", "age": 35, "tags": ["沉稳", "幽默"],
@@ -75,7 +75,7 @@ class CompanionManager:
 
     def __init__(self, path: str | None = None, clock=None):
         self.path = path or os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                         "予安_companions.json")
+                                         "aiPartner_companions.json")
         self.clock = clock or (lambda: __import__("time").time())
         self._state = {"companions": [], "active_id": None, "next_id": 1,
                        "audit": [], "schema_version": PROFILE_SCHEMA_VERSION}

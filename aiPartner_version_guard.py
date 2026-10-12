@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · 版本升级护栏（§6.1 / §17 版本管理的"长牙"机制）
+"""aiPartner · 版本升级护栏（§6.1 / §17 版本管理的"长牙"机制）
 ====================================================================
 
 为什么需要它：
@@ -24,13 +24,13 @@
   - 聚合：app（发布版本，仅跟踪）
 
 用法：
-  python 予安_version_guard.py                 # 比对基线，有 BREAKING 则 exit 1
-  python 予安_version_guard.py --update-baseline  # 把当前快照记为新基线
-  python 予安_version_guard.py --strict          # WARN 也视为失败（CI 卡更严）
-  python 予安_version_guard.py --manifest 路径    # 指定基线文件位置
+  python aiPartner_version_guard.py                 # 比对基线，有 BREAKING 则 exit 1
+  python aiPartner_version_guard.py --update-baseline  # 把当前快照记为新基线
+  python aiPartner_version_guard.py --strict          # WARN 也视为失败（CI 卡更严）
+  python aiPartner_version_guard.py --manifest 路径    # 指定基线文件位置
 
-CI 接入：在「提交前 / 构建流水线」跑一次 `python 予安_version_guard.py`，
-  exit 1 = 拦下。基线文件 予安_version_manifest.json 需随代码一起提交，
+CI 接入：在「提交前 / 构建流水线」跑一次 `python aiPartner_version_guard.py`，
+  exit 1 = 拦下。基线文件 aiPartner_version_manifest.json 需随代码一起提交，
   版本升级时先 --update-baseline 再提交，护栏即成为可回溯的"版本牙齿"。
 """
 
@@ -69,7 +69,7 @@ def _parse_output_keys(block: str) -> list:
 # 导致 monkeypatch 改不掉、变异测试探不出牙齿。
 
 def _gov_policy():
-    import 予安_ConsentStore as CS
+    import aiPartner_ConsentStore as CS
     content = _h(
         json.dumps(CS.SCENE_CATALOG, ensure_ascii=False, sort_keys=True),
         repr(sorted(CS.SENSITIVE_SCENES)),
@@ -78,30 +78,30 @@ def _gov_policy():
 
 
 def _gov_prompt_template():
-    import 予安_Prompt as PR
+    import aiPartner_Prompt as PR
     content = _h(PR._RULES_BLOCK, PR._REDLINE_BLOCK, PR._OUTPUT_BLOCK)
     return PR.PROMPT_VERSION, content, "Prompt 固定段（反应规则 + 红线 + 输出块）"
 
 
 def _gov_output_schema():
-    import 予安_Prompt as PR
+    import aiPartner_Prompt as PR
     return PR.OUTPUT_SCHEMA_VERSION, _parse_output_keys(PR._OUTPUT_BLOCK), \
         "LLM 输出 JSON 契约字段"
 
 
 def _gov_profile_schema():
-    import 予安_CompanionManager as CM
+    import aiPartner_CompanionManager as CM
     return CM.PROFILE_SCHEMA_VERSION, sorted(CM.EDITABLE_FIELDS), \
         "伴侣档案可编辑字段白名单"
 
 
 def _gov_safety_rules():
-    import 予安_StateEngine as SE
+    import aiPartner_StateEngine as SE
     return SE.SAFETY_RULES_VERSION, sorted(SE.CRISIS_WORDS), "危机词库"
 
 
 def _gov_state_machine():
-    import 予安_StateEngine as SE
+    import aiPartner_StateEngine as SE
     surface = []
     for ns in (SE.State, SE.Sig):
         for v in vars(ns).values():
@@ -112,13 +112,13 @@ def _gov_state_machine():
 
 
 def _gov_plugin_contract():
-    import 予安_StateEngine as SE
+    import aiPartner_StateEngine as SE
     return SE.PLUGIN_CONTRACT_VERSION, \
         sorted(SE.InteractionPlugin.__dataclass_fields__.keys()), "插件契约字段"
 
 
 def _gov_model_config():
-    import 予安_LLM as LLM
+    import aiPartner_LLM as LLM
     chat_def = LLM.LLMClient.chat.__defaults__ or ()
     init_def = LLM.LLMClient.__init__.__defaults__ or ()
     temperature = chat_def[0] if chat_def else None
@@ -132,18 +132,18 @@ def _gov_model_config():
 
 
 def _gov_memory_schema():
-    import 予安_MemoryStore as MS
+    import aiPartner_MemoryStore as MS
     return MS.MEMORY_SCHEMA_VERSION, sorted(MS.MEMORY_FIELDS), "长期记忆记录类型"
 
 
 def _gov_tts_voice():
-    import 予安_VoiceTemplate as VT
+    import aiPartner_VoiceTemplate as VT
     return VT.TTS_VOICE_VERSION, VT.all_ids(), \
         "声线模版（声线 ID 集合：删=阻断 / 加=兼容）"
 
 
 def _gov_tts_voice_params():
-    import 予安_VoiceTemplate as VT
+    import aiPartner_VoiceTemplate as VT
     import hashlib, json
     # 排除 id（由 tts_voice 的 set 键管增删），其余字段归一化哈希：
     # 改 name/pitch/speed/timbre/gender/preview_text/voice_id 都会触发指纹变化。
@@ -161,7 +161,7 @@ def _gov_tts_voice_params():
 
 
 def _gov_app():
-    import 予安_Version as V
+    import aiPartner_Version as V
     return V.APP_VERSION, V.APP_VERSION, "整体发布版本"
 
 
@@ -230,7 +230,7 @@ def snapshot_current() -> dict[str, Entry]:
 
 def snapshot_to_dict(snap: dict[str, Entry]) -> dict:
     return {
-        "generated_by": "予安_version_guard",
+        "generated_by": "aiPartner_version_guard",
         "entries": {
             k: {"version": e.version, "content": e.content, "summary": e.summary}
             for k, e in snap.items()
@@ -390,8 +390,8 @@ def run_check(manifest: str, strict: bool) -> int:
 def main(argv=None) -> int:
     here = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, here)
-    ap = argparse.ArgumentParser(description="予安 版本升级护栏")
-    ap.add_argument("--manifest", default=os.path.join(here, "予安_version_manifest.json"),
+    ap = argparse.ArgumentParser(description="aiPartner 版本升级护栏")
+    ap.add_argument("--manifest", default=os.path.join(here, "aiPartner_version_manifest.json"),
                     help="基线 manifest 路径")
     ap.add_argument("--update-baseline", action="store_true",
                     help="把当前快照记为新基线")

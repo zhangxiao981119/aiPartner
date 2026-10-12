@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · TTS 声线模版（§13 声线模版 + §6 输出 Schema 的 tts_params）
+"""aiPartner · TTS 声线模版（§13 声线模版 + §6 输出 Schema 的 tts_params）
 
 为什么独立成模块：
   §13 定义了 6 套声线模版（女声 3 / 男声 3），声线独立于性格、可自由组合、
@@ -25,7 +25,7 @@
   - 不生成试听音频，`preview_text` 仅提供试听文案，真试听由前端 / TTS 负责。
 
 版本纪律：本模块任一声线的 id / 参数 / 路由别名（TIMBRE_ALIASES）变更，必须同步升
-TTS_VOICE_VERSION，并在 `予安_version_guard.py` 中通过 tts_voice（set 键，声线增删）/
+TTS_VOICE_VERSION，并在 `aiPartner_version_guard.py` 中通过 tts_voice（set 键，声线增删）/
 tts_voice_params（review 键，参数 + 别名）溯源。
 """
 

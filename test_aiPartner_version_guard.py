@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · 版本升级护栏 测试（pytest）
+"""aiPartner · 版本升级护栏 测试（pytest）
 ====================================
 覆盖：
   - 纯逻辑分类：无 bump 改内容=BREAKING / 删项=BREAKING / 加项=OK /
@@ -18,13 +18,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-import 予安_StateEngine as SE
-import 予安_Prompt as PR
-import 予安_Version as V
-import 予安_MemoryStore as MS
-import 予安_VoiceTemplate as VT
-import 予安_LLM as LLM
-from 予安_version_guard import (GOVERNORS, Entry, classify, diff, run_check,
+import aiPartner_StateEngine as SE
+import aiPartner_Prompt as PR
+import aiPartner_Version as V
+import aiPartner_MemoryStore as MS
+import aiPartner_VoiceTemplate as VT
+import aiPartner_LLM as LLM
+from aiPartner_version_guard import (GOVERNORS, Entry, classify, diff, run_check,
                                 save_baseline, snapshot_current, SET_KEYS,
                                 REVIEW_KEYS, RESERVED_KEYS)
 

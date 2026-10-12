@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-予安 · 陪伴状态机 StateEngine（方案设计 §16.2 可运行骨架 + §16.6 插件体系）
+aiPartner · 陪伴状态机 StateEngine（方案设计 §16.2 可运行骨架 + §16.6 插件体系）
 ==========================================================================
 
 把「勿扰 / 玩伴 / 在场」收拢成一条状态机（对应画布 Screen 25）：
@@ -33,7 +33,7 @@
     · 送别（DISMISS）自动喂入「separated」，思念在你走后自然生长
   - 动画 ID：引用 §14 可替换系统（enter_stargather / exit_dissolve / pat_shoulder ...）
 
-测试：test_予安_StateEngine.py（pytest，流转断言 + 插件注册/护栏拦截 + 情绪调制）
+测试：test_aiPartner_StateEngine.py（pytest，流转断言 + 插件注册/护栏拦截 + 情绪调制）
 """
 
 from __future__ import annotations
@@ -572,7 +572,7 @@ if __name__ == "__main__":
     play(Sig.RESUME)                                   # 解除 → 回待机
 
     print("── 情绪接入演示（§10 + §16.7：细色调制同频措辞）──")
-    from 予安_MoodEngineV2 import MoodEngineV2
+    from aiPartner_MoodEngineV2 import MoodEngineV2
     mood = MoodEngineV2(bond=0.62, now=lambda: t[0])
     eng2 = StateEngine(consent=Consent(
         master=True, scopes={"game", "read", "work"}), mood=mood)
@@ -597,7 +597,7 @@ if __name__ == "__main__":
     play2(Sig.BOREDOM)                                 # 提议 → 措辞跟着此刻的心情走
 
     print("── 趣味话题演示（§16.3 生产口径：直接开聊，看反应判断）──")
-    from 予安_TopicEngine import TopicEngine
+    from aiPartner_TopicEngine import TopicEngine
     eng3 = StateEngine(consent=Consent(
         master=True, scopes={"game", "read", "work"}), topics=TopicEngine())
     eng3.clock = lambda: t[0]
@@ -614,7 +614,7 @@ if __name__ == "__main__":
     play3(Sig.DISMISS)
 
     print("── 导航陪伴演示（§16.4 插件，§16.6 契约接入）──")
-    from 予安_NavPlugin import NavCompanionPlugin
+    from aiPartner_NavPlugin import NavCompanionPlugin
     topics2 = TopicEngine()
     eng4 = StateEngine(consent=Consent(
         master=True, scopes={"game", "read", "work", "nav"}), topics=topics2)

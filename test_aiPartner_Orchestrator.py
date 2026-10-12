@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安_Orchestrator 测试：授权闸 / 危机护栏 / LLM 降级 / 情绪贯穿 / 记轮 / 状态机直通。"""
+"""aiPartner_Orchestrator 测试：授权闸 / 危机护栏 / LLM 降级 / 情绪贯穿 / 记轮 / 状态机直通。"""
 
 import os
 import sys
@@ -9,10 +9,10 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import 予安_CompanionManager as cm
-import 予安_ConsentStore as cs
-import 予安_Orchestrator as oc
-from 予安_StateEngine import Sig
+import aiPartner_CompanionManager as cm
+import aiPartner_ConsentStore as cs
+import aiPartner_Orchestrator as oc
+from aiPartner_StateEngine import Sig
 
 CLOCK = [1000.0]
 
@@ -52,10 +52,10 @@ def test_chat_llm_happy_path_and_turn_count():
     orch, companions, _ = make(llm=llm)
     r = orch.chat("今天好累啊")
     assert r["source"] == "llm" and r["reply_text"] == "累了吧，先靠一会儿。"
-    assert r["persona"] == "予安"
+    assert r["persona"] == "aiPartner"
     assert companions.status()["turns"] == 1
     sysmsg = llm.calls[0][0]["content"]
-    assert "「予安」" in sysmsg and "【红线】" in sysmsg      # 人格段 + 护栏都在
+    assert "「aiPartner」" in sysmsg and "【红线】" in sysmsg      # 人格段 + 护栏都在
     assert llm.calls[0][1] == {"role": "user", "content": "今天好累啊"}
 
 
@@ -152,7 +152,7 @@ def test_freeze_never_blocks_chat():
     for _ in range(cm.EDIT_LOCK_TURNS + 1):
         companions.count_turn()
     r = orch.chat("还在吗")
-    assert r["reply_text"] and r["persona"] == "予安"
+    assert r["reply_text"] and r["persona"] == "aiPartner"
     with pytest.raises(cm.CompanionLockedError):          # 冻结依旧锁修改
         companions.update(companions.active()["id"], {"tags": ["高冷"]})
 
@@ -160,7 +160,7 @@ def test_freeze_never_blocks_chat():
 def test_status_overview():
     orch, _, store = make(consent=True, llm=FakeLLM([]))
     s = orch.status()
-    assert s["consent"] is True and s["companion"] == "予安"
+    assert s["consent"] is True and s["companion"] == "aiPartner"
     assert s["locked"] is False and s["llm"] is True and "mood" in s
 
 

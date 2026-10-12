@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""予安 · 总装编排层（§15「真实接入代码」实现层）
+"""aiPartner · 总装编排层（§15「真实接入代码」实现层）
 ====================================================
 
 把七个模块串成最小可运行服务，每轮自由对话的流水线：
 
     授权闸 → 在场伴侣 → 危机词护栏（§8.1 前置）→ 情绪事件推断（MoodEngineV2）
-    → 拼 System Prompt（予安_Prompt × CompanionManager 在场档案）
-    → 调 LLM（予安_LLM，失败即规则兜底）→ 记对话轮数（推进 §12 冻结计数）→ 回包
+    → 拼 System Prompt（aiPartner_Prompt × CompanionManager 在场档案）
+    → 调 LLM（aiPartner_LLM，失败即规则兜底）→ 记对话轮数（推进 §12 冻结计数）→ 回包
 
 设计原则：
   - **护栏先于一切**：授权关闭 / 勿扰 / 无在场伴侣 / 危机词，都在调 LLM 之前拦下，
@@ -18,28 +18,28 @@
   - **事件路径**：`event()` 直通 StateEngine（游戏/阅读/工作同频、无聊提议、
     话题、导航），返回统一的 dict 结构。
 
-配置 LLM（环境变量，见 予安_LLM.py）：YUAN_LLM_BASE_URL / API_KEY / MODEL。
+配置 LLM（环境变量，见 aiPartner_LLM.py）：YUAN_LLM_BASE_URL / API_KEY / MODEL。
 
-自测：python 予安_Orchestrator.py（跑一段完整会话，输出到 .workbuddy/）。
-测试：test_予安_Orchestrator.py（pytest）
+自测：python aiPartner_Orchestrator.py（跑一段完整会话，输出到 .workbuddy/）。
+测试：test_aiPartner_Orchestrator.py（pytest）
 """
 
 from __future__ import annotations
 
 import os
 
-from 予安_CompanionManager import CompanionManager, PROFILE_SCHEMA_VERSION
-from 予安_MemoryStore import MemoryStore
-from 予安_ConsentStore import ConsentStore
-from 予安_LLM import (LLMClient, MODEL_CONFIG_VERSION, JSON_RESPONSE_MODE,
+from aiPartner_CompanionManager import CompanionManager, PROFILE_SCHEMA_VERSION
+from aiPartner_MemoryStore import MemoryStore
+from aiPartner_ConsentStore import ConsentStore
+from aiPartner_LLM import (LLMClient, MODEL_CONFIG_VERSION, JSON_RESPONSE_MODE,
                       parse_structured_reply)
-from 予安_MoodEngineV2 import MoodEngineV2
-from 予安_Prompt import (build_system_prompt, PROMPT_VERSION, OUTPUT_SCHEMA_VERSION,
+from aiPartner_MoodEngineV2 import MoodEngineV2
+from aiPartner_Prompt import (build_system_prompt, PROMPT_VERSION, OUTPUT_SCHEMA_VERSION,
                         PromptVersionLog)
-from 予安_StateEngine import (StateEngine, Sig, STATE_VERSION, SAFETY_RULES_VERSION,
+from aiPartner_StateEngine import (StateEngine, Sig, STATE_VERSION, SAFETY_RULES_VERSION,
                             PLUGIN_CONTRACT_VERSION)
-from 予安_VoiceTemplate import enrich_tts_params
-from 予安_Version import summary as version_summary
+from aiPartner_VoiceTemplate import enrich_tts_params
+from aiPartner_Version import summary as version_summary
 
 # ────────────────────────── 文本 → 情绪事件（规则兜底） ──────────────────────────
 
@@ -210,7 +210,7 @@ class Orchestrator:
 if __name__ == "__main__":
     import tempfile
 
-    import 予安_ConsentStore as _cs
+    import aiPartner_ConsentStore as _cs
 
     lines = []
 

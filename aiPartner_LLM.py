@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · LLM 客户端（§16.3 生产版 · OpenAI 兼容协议）
+"""aiPartner · LLM 客户端（§16.3 生产版 · OpenAI 兼容协议）
 ====================================================
 
 用当前主流开源大模型（Qwen / DeepSeek / GLM / Kimi 等均开源权重、
@@ -18,7 +18,7 @@
 - 失败即降级：未配置 / 超时 / 限流 / 网络错误 → 返回 None，调用方走规则兜底；
 - 可注入：测试传 fake client，不触网。
 
-自测：python 予安_LLM.py（仅打印配置状态，不真实调用）。
+自测：python aiPartner_LLM.py（仅打印配置状态，不真实调用）。
 """
 
 from __future__ import annotations
@@ -36,10 +36,10 @@ import urllib.request
 MODEL_CONFIG_VERSION = "2026.10-2"
 
 # 结构化输出：OpenAI 兼容的 response_format.type。让模型返回可解析 JSON（§6 输出契约），
-# Orchestrator 据此抽出 reply_text 与 tts_params（再由 予安_VoiceTemplate 路由到 voice_id）。
+# Orchestrator 据此抽出 reply_text 与 tts_params（再由 aiPartner_VoiceTemplate 路由到 voice_id）。
 JSON_RESPONSE_MODE = "json_object"
 
-# 输出契约键（对齐 予安_Prompt._OUTPUT_BLOCK）：解析时只认这些键、缺失补 None。
+# 输出契约键（对齐 aiPartner_Prompt._OUTPUT_BLOCK）：解析时只认这些键、缺失补 None。
 # 有「契约键一致性」测试钉死它与 Prompt 的 _OUTPUT_BLOCK 不脱钩。
 REPLY_CONTRACT_KEYS = ("reply_text", "emotion", "mood", "bond",
                        "tts_params", "animation", "action")

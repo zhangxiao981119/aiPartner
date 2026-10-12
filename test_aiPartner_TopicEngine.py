@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""予安_TopicEngine 生产版测试（§16.3）。"""
+"""aiPartner_TopicEngine 生产版测试（§16.3）。"""
 
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import 予安_TopicEngine as tmod  # noqa: E402
-from 予安_TopicEngine import TopicEngine, classify_by_rules, categorize  # noqa: E402
+import aiPartner_TopicEngine as tmod  # noqa: E402
+from aiPartner_TopicEngine import TopicEngine, classify_by_rules, categorize  # noqa: E402
 
 SEED = [("A 段子", "搞笑", "微博热搜"), ("B 剧集", "影视", "抖音"),
         ("C 食谱", "美食", "小红书"), ("D 补丁", "游戏", "快手")]

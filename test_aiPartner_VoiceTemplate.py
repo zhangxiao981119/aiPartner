@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · TTS 声线模版 测试（pytest）"""
+"""aiPartner · TTS 声线模版 测试（pytest）"""
 
 import os
 import sys
@@ -8,7 +8,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-import 予安_VoiceTemplate as VT
+import aiPartner_VoiceTemplate as VT
 
 
 def test_version_constant_exists():

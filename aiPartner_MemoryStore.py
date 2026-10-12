@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""予安 · 长期记忆持久化（§2.5 / §17 实现层）
+"""aiPartner · 长期记忆持久化（§2.5 / §17 实现层）
 ====================================================
 
 承接预留的 MEMORY_SCHEMA_VERSION，把"情感记忆 + 关系史 + 学到的用户事实"
@@ -13,14 +13,14 @@
       【关系史】  {relationship_note} ←  type=relationship / fact 折叠进来
   - 记录类型白名单 MEMORY_FIELDS（schema 的一部分）：affective / relationship / fact。
     删类型 = 破坏性（旧数据/代码断引用），由版本护栏设为 set 键（删即 BREAKING）。
-  - **不重复** 予安_TopicEngine 的「口味记忆」（类别偏好已落盘）；**不存** bond
+  - **不重复** aiPartner_TopicEngine 的「口味记忆」（类别偏好已落盘）；**不存** bond
     （bond 属情绪引擎态，走 Prompt 的 bond= 入参）；**不联动** 伴侣删除（按需按 cid 清桶）。
 
-持久化：复用 予安_CompanionManager 范式——本地 JSON 原子写入（tmp + replace），
+持久化：复用 aiPartner_CompanionManager 范式——本地 JSON 原子写入（tmp + replace），
         重启即恢复；文件缺失/损坏一律 fail-safe（空记忆，绝不虚构一段关系）。
 
 自测：直接运行本文件看完整生命周期演示（写入 → 读取 → 重启恢复 → 损坏 fail-safe）。
-测试：test_予安_MemoryStore.py（pytest）
+测试：test_aiPartner_MemoryStore.py（pytest）
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ _STATE_KEYS = ("schema_version", "memories", "audit")
 _AUDIT_CAP = 200
 _MAX_AFFECTIVE_DEFAULT = 8          # summarize_for_prompt 默认取最近 N 条情感记忆
 
-# 占位文本：与 予安_Prompt.build_system_prompt 的"暂无"占位保持一致
+# 占位文本：与 aiPartner_Prompt.build_system_prompt 的"暂无"占位保持一致
 _PLACEHOLDER = "（暂无）"
 
 
@@ -61,7 +61,7 @@ class MemoryStore:
 
     def __init__(self, path: str | None = None, clock=None):
         self.path = path or os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                         "予安_memory.json")
+                                         "aiPartner_memory.json")
         self.clock = clock or (lambda: __import__("time").time())
         self._state = {"schema_version": MEMORY_SCHEMA_VERSION, "memories": {}, "audit": []}
         self._load()
