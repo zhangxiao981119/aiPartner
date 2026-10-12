@@ -1,0 +1,112 @@
+{
+  "generated_by": "予安_version_guard",
+  "entries": {
+    "policy": {
+      "version": "2026.10-1",
+      "content": "5b6f2d38ab0a7d8d7083ce24",
+      "summary": "授权说明（场景目录 + 敏感场景硬边界）"
+    },
+    "prompt_template": {
+      "version": "2026.10-1",
+      "content": "5af3199bfb0206721d0d92a8",
+      "summary": "Prompt 固定段（反应规则 + 红线 + 输出块）"
+    },
+    "output_schema": {
+      "version": "2026.10-1",
+      "content": [
+        "action",
+        "animation",
+        "bond",
+        "emotion",
+        "mood",
+        "reply_text",
+        "tts_params"
+      ],
+      "summary": "LLM 输出 JSON 契约字段"
+    },
+    "profile_schema": {
+      "version": "2026.10-1",
+      "content": [
+        "age",
+        "appearance",
+        "big_five",
+        "bio",
+        "catchphrase",
+        "gender",
+        "name",
+        "occupation",
+        "tags",
+        "voice"
+      ],
+      "summary": "伴侣档案可编辑字段白名单"
+    },
+    "safety_rules": {
+      "version": "2026.10-1",
+      "content": [
+        "割腕",
+        "吞",
+        "安眠药",
+        "自伤",
+        "自杀",
+        "跳楼",
+        "轻生",
+        "过量"
+      ],
+      "summary": "危机词库"
+    },
+    "state_machine": {
+      "version": "2026.10-1",
+      "content": "9a1b46f10c5ab4ca4155a5c0",
+      "summary": "状态机状态 / 信号面"
+    },
+    "plugin_contract": {
+      "version": "2026.10-1",
+      "content": [
+        "actions",
+        "anims",
+        "contract_version",
+        "name",
+        "replies",
+        "scope",
+        "signals"
+      ],
+      "summary": "插件契约字段"
+    },
+    "model_config": {
+      "version": "2026.10-2",
+      "content": "854a9eb25f9a21c24bd79106",
+      "summary": "LLM 调用配置默认值（含 json 响应模式）"
+    },
+    "memory_schema": {
+      "version": "2026.10-2",
+      "content": [
+        "affective",
+        "fact",
+        "relationship"
+      ],
+      "summary": "长期记忆记录类型"
+    },
+    "tts_voice": {
+      "version": "2026.10-2",
+      "content": [
+        "chenzhou",
+        "langxing",
+        "mianmian",
+        "qingyue",
+        "shanlan",
+        "xiaoyu"
+      ],
+      "summary": "声线模版（声线 ID 集合：删=阻断 / 加=兼容）"
+    },
+    "tts_voice_params": {
+      "version": "2026.10-2",
+      "content": "b85b308b64cdea2e13b1ec6b",
+      "summary": "声线参数 + 路由别名（pitch/speed/timbre/aliases，变了需复核）"
+    },
+    "app": {
+      "version": "2026.10-1",
+      "content": "2026.10-1",
+      "summary": "整体发布版本"
+    }
+  }
+}

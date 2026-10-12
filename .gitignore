@@ -1,0 +1,26 @@
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ── 测试/工具产物 ──
+.pytest_cache/
+.workbuddy/junit.xml
+.workbuddy/result.txt
+.workbuddy/pdf_log.txt
+.workbuddy/export_pngs/
+.workbuddy/*.png
+
+# ── 运行时用户数据（含隐私，不入库） ──
+予安_companions.json
+予安_memory.json
+予安_consent.json
+予安_mood.json
+
+# ── 编辑器 / 系统 ──
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
